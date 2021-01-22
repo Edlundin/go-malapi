@@ -14,11 +14,11 @@ func (c *Client) New() (Client, error) {
 	return apiClient, err
 }
 
-func (c *Client) ApiUrl() string {
+func (c Client) ApiUrl() string {
 	return c.apiUrl
 }
 
-func (c *Client) Bearer() string {
+func (c Client) Bearer() string {
 	return c.bearer
 }
 
