@@ -6,7 +6,7 @@ type Client struct {
 	clientId string
 }
 
-func (c *Client) New() (Client, error) {
+func NewClient() (Client, error) {
 	var err error
 
 	apiClient := Client{apiUrl: "https://api.myanimelist.net/v2", clientId: ""}
