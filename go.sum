@@ -1,2 +1,6 @@
 github.com/chebyrash/promise v0.0.0-20210114125841-d119a93f8638 h1:/pClaZJuU4qpWWtVM5v4FhgN+b7UEPw831jPsPRZzdA=
 github.com/chebyrash/promise v0.0.0-20210114125841-d119a93f8638/go.mod h1:Dbo6iEcupxOhXNpNeRfv7GUUeKicMcSxTZkxXQnUbUk=
+github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
+github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/nirasan/go-oauth-pkce-code-verifier v0.0.0-20170819232839-0fbfe93532da h1:qiPWuGGr+1GQE6s9NPSK8iggR/6x/V+0snIoOPYsBgc=
+github.com/nirasan/go-oauth-pkce-code-verifier v0.0.0-20170819232839-0fbfe93532da/go.mod h1:DvuJJ/w1Y59rG8UTDxsMk5U+UJXJwuvUgbiJSm9yhX8=
