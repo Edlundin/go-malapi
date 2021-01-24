@@ -37,17 +37,25 @@ func animeFieldsToGetParams(animeFields []AnimeField) string { //! TODO: test th
 //if resultLimit == 0 -> 100
 //offset default: 0
 func SearchAnime(apiClient mal.Client, animeTitle string, resultLimit uint, offset uint, fields []AnimeField) {
+	const endPoint string = "/anime"
 }
 
-func GetAnimeDetails(apiClient mal.Client, animeId uint, fields []AnimeField) {}
+func GetAnimeDetails(apiClient mal.Client, animeId uint, fields []AnimeField) {
+	var endPoint string = fmt.Sprintf("/anime/%d", animeId)
+}
 
 //if resultLimit == 0 -> 100
 //offset default: 0
 func GetAnimeRanking(apiClient mal.Client, rankingType AnimeRankingType, resultLimit uint, offset uint, fields []AnimeField) {
+	const endPoint string = "/anime/ranking"
 }
 
-func GetSeasonalAnimes(apiClient mal.Client, year uint, season AnimeSeason) {}
+func GetSeasonalAnimes(apiClient mal.Client, year uint, season AnimeSeason) {
+	var endPoint string = fmt.Sprintf("/anime/ranking/%d/%s", year, season)
+}
 
 //if resultLimit == 0 -> 100
 //offset default: 0
-func GetSuggestedAnimes(apiClient mal.Client, resultLimit uint, offset uint) {}
+func GetSuggestedAnimes(apiClient mal.Client, resultLimit uint, offset uint) {
+	const endPoint string = "/anime/suggestion"
+}
