@@ -28,7 +28,7 @@ func GenerateMalOAuth2AuthorizationURL(clientID string, redirectURI string) (OAu
 	authorizationData := OAuth2AuthorizationData{}
 	pkceGenerator, err := pkce.CreateCodeVerifier()
 
-	if err == nil {
+	if err != nil {
 		return authorizationData, fmt.Errorf("pkce generation: %s", err.Error())
 	}
 
