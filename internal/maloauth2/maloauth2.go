@@ -2,6 +2,7 @@ package maloauth2
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,14 +11,6 @@ import (
 	"github.com/google/uuid"
 	pkce "github.com/nirasan/go-oauth-pkce-code-verifier"
 )
-
-//OAuth2AuthorizationData holds the data needed to obtain an access token and a refresh token from MAL's API.
-type OAuth2AuthorizationData struct {
-	pkceCodeChallenge string
-	pkceCodeVerifier  string
-	authorizationURL  string
-	state             string
-}
 
 //GenerateMalOAuth2AuthorizationURL generates an authorization URL for MAL's API.
 func GenerateMalOAuth2AuthorizationURL(clientID string, redirectURI string) (OAuth2AuthorizationData, error) {
@@ -32,20 +25,20 @@ func GenerateMalOAuth2AuthorizationURL(clientID string, redirectURI string) (OAu
 		return authorizationData, fmt.Errorf("pkce generation: %s", err.Error())
 	}
 
+	pkceCodeChallenge := pkceGenerator.CodeChallengePlain()
 	authorizationData.pkceCodeVerifier = pkceGenerator.String()
-	authorizationData.pkceCodeChallenge = pkceGenerator.CodeChallengePlain()
 	authorizationData.state = uuid.New().String()
 
-	authorizationURL, err := url.Parse(malOauth2AuthorizationEndPoint)
+	endpointURL, err := url.Parse(malOauth2AuthorizationEndPoint)
 
 	if err != nil {
-		return authorizationData, fmt.Errorf("url generation: %s", err.Error())
+		return authorizationData, fmt.Errorf("endpoint URL parsing: %s", err.Error())
 	}
 
-	query := authorizationURL.Query()
+	query := endpointURL.Query()
 	query.Add("response_type", responseType)
 	query.Add("client_id", clientID)
-	query.Add("code_challenge", authorizationData.pkceCodeChallenge)
+	query.Add("code_challenge", pkceCodeChallenge)
 	query.Add("state", authorizationData.state)
 	query.Add("code_challenge_method", codeChallengeMethod)
 
@@ -53,16 +46,72 @@ func GenerateMalOAuth2AuthorizationURL(clientID string, redirectURI string) (OAu
 		query.Add("redirect_uri", redirectURI)
 	}
 
-	authorizationURL.RawQuery = query.Encode()
-	authorizationData.authorizationURL = authorizationURL.String()
+	endpointURL.RawQuery = query.Encode()
+	authorizationData.authorizationURL = endpointURL.String()
 
 	return authorizationData, nil
 }
 
+func GenerateMalOAuth2AccessTokenRequest(clientID string, clientSecret string, code string, codeVerifier string) AccessTokenRequestData {
+	const malOAuth2AccessTokenEndPoint string = "https://myanimelist.net/v1/oauth2/token"
+	const grantType string = "authorization_code"
+
+	requestArguments := url.Values{}
+
+	requestArguments.Add("grant_type", grantType)
+	requestArguments.Add("client_id", clientID)
+	requestArguments.Add("client_secret", clientSecret)
+	requestArguments.Add("code", code)
+	requestArguments.Add("code_verifier", codeVerifier)
+
+	return AccessTokenRequestData{
+		endpoint:  malOAuth2AccessTokenEndPoint,
+		arguments: requestArguments,
+	}
+}
+
+func ParseMalOAuth2AccessTokenResponse(httpResponse []byte, httpResponseStatusCode int) (AccessTokenRequestResponseData, error) {
+	var responseData AccessTokenRequestResponseData
+
+	if httpResponseStatusCode == http.StatusOK {
+		err := json.Unmarshal(httpResponse, &responseData)
+
+		if err != nil {
+			return responseData, fmt.Errorf("demarshalling JSON response body (code: %d): %s", httpResponseStatusCode, err.Error())
+		}
+	} else {
+		const errorTypeKey string = "error"
+		const errorMessageKey string = "message"
+		var responseErrorData map[string]interface{}
+
+		err := json.Unmarshal(httpResponse, &responseErrorData)
+
+		if err != nil {
+			return responseData, fmt.Errorf("demarshalling JSON response body (code: %d): %s", httpResponseStatusCode, err.Error())
+		}
+
+		requestErrorType, ok := responseErrorData[errorTypeKey]
+
+		if !ok {
+			return responseData, fmt.Errorf("getting MAL's API error type (code: %d): %q key not found", httpResponseStatusCode, errorTypeKey)
+		}
+
+		requestErrorMessage, ok := responseErrorData[errorMessageKey]
+
+		if !ok {
+			return responseData, fmt.Errorf("getting MAL's API error message (code: %d): %q key not found", httpResponseStatusCode, errorMessageKey)
+		}
+
+		return responseData, fmt.Errorf("request error (code: %d): error type: %q, message: %q", httpResponseStatusCode, requestErrorType, requestErrorMessage)
+	}
+
+	return responseData, nil
+}
+
 //ListenForMalOAuth2Callback creates a web server listening on the URI "http://host:port" (passing host and port by arguments).
-//Upon receiving a MAL API callback, its arguments ("code" and "state") are parsed and returned by a map-typed channel.
-//After receiving these arguments, the web server will shut itself down.
-func ListenForMalOAuth2Callback(host string, listeningPort uint) <-chan map[string]string {
+//Upon receiving a MAL API callback, its arguments ("code" and "state") are parsed, if the state pass the check, the code is returned by a string-typed channel.
+//After that, the web server will shut itself down.
+func ListenForMalOAuth2Callback(host string, listeningPort uint, state string) <-chan string {
 	const malOAuth2CallbackRoute string = "/maloauth2callback"
 	const codeParamName string = "code"
 	const stateParamName string = "state"
@@ -70,18 +119,25 @@ func ListenForMalOAuth2Callback(host string, listeningPort uint) <-chan map[stri
 
 	httpServerHandler := http.NewServeMux()
 	httpServer := &http.Server{Addr: fmt.Sprintf("%s:%d", host, listeningPort), Handler: httpServerHandler}
-	queryParamChan := make(chan map[string]string)
+	queryParamChan := make(chan string)
 
 	httpServerHandler.HandleFunc(malOAuth2CallbackRoute, func(writer http.ResponseWriter, request *http.Request) {
 		if request.URL.Path == malOAuth2CallbackRoute {
 			if request.Method == callbackHTTPMethod {
-				code, state := request.URL.Query().Get(codeParamName), request.URL.Query().Get(stateParamName)
+				receivedCode, receivedState := request.URL.Query().Get(codeParamName), request.URL.Query().Get(stateParamName)
 
-				if len(code) > 0 && len(state) > 0 {
+				if len(receivedCode) > 0 && state == receivedState {
 					writer.WriteHeader(200)
-					queryParamChan <- map[string]string{codeParamName: code, stateParamName: state}
+					queryParamChan <- receivedCode
 				} else {
-					log.Println(fmt.Sprintf("request argument missing (len(%s): %d, len(%s): %d", codeParamName, len(code), stateParamName, len(state))) //TODO: hide in production environment (development log) //TODO: replace by a proper logger
+					http.Error(writer, "", http.StatusBadRequest)
+					log.Println(fmt.Sprintf("request argument missing or incorrect:\nreceivedState: %s (%d)\nwantedState: %s (%d)\nreceivedCode: %s (%d))",
+						receivedState,
+						len(receivedState),
+						state,
+						len(state),
+						receivedCode,
+						len(receivedCode))) //TODO: hide in production environment (development log) //TODO: replace by a proper logger
 				}
 			} else {
 				http.Error(writer, "", http.StatusMethodNotAllowed)
