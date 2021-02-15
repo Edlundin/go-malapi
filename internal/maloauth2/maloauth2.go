@@ -12,7 +12,7 @@ import (
 	pkce "github.com/nirasan/go-oauth-pkce-code-verifier"
 )
 
-//GenerateMalOAuth2AuthorizationURL generates an authorization URL for MAL's API.
+//GenerateMalOAuth2AuthorizationURL generates an authorization URL for MAL's API
 func GenerateMalOAuth2AuthorizationURL(clientID string, redirectURI string) (OAuth2AuthorizationData, error) {
 	const malOauth2AuthorizationEndPoint string = "https://myanimelist.net/v1/oauth2/authorize"
 	const responseType string = "code"
@@ -52,6 +52,7 @@ func GenerateMalOAuth2AuthorizationURL(clientID string, redirectURI string) (OAu
 	return authorizationData, nil
 }
 
+//GenerateMalOAuth2AccessTokenRequest generates the data needed to form an HTTP POST request to obtain the access token
 func GenerateMalOAuth2AccessTokenRequest(clientID string, clientSecret string, code string, codeVerifier string) AccessTokenRequestData {
 	const malOAuth2AccessTokenEndPoint string = "https://myanimelist.net/v1/oauth2/token"
 	const grantType string = "authorization_code"
@@ -70,6 +71,7 @@ func GenerateMalOAuth2AccessTokenRequest(clientID string, clientSecret string, c
 	}
 }
 
+//ParseMalOAuth2AccessTokenResponse parses the body of an access token request's response and returns the parsed data or an error
 func ParseMalOAuth2AccessTokenResponse(httpResponse []byte, httpResponseStatusCode int) (AccessTokenRequestResponseData, error) {
 	var responseData AccessTokenRequestResponseData
 
@@ -110,7 +112,7 @@ func ParseMalOAuth2AccessTokenResponse(httpResponse []byte, httpResponseStatusCo
 
 //ListenForMalOAuth2Callback creates a web server listening on the URI "http://host:port" (passing host and port by arguments).
 //Upon receiving a MAL API callback, its arguments ("code" and "state") are parsed, if the state pass the check, the code is returned by a string-typed channel.
-//After that, the web server will shut itself down.
+//After that, the web server will shut itself down
 func ListenForMalOAuth2Callback(host string, listeningPort uint, state string) <-chan string {
 	const malOAuth2CallbackRoute string = "/maloauth2callback"
 	const codeParamName string = "code"
