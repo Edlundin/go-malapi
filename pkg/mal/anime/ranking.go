@@ -1,9 +1,9 @@
 package anime
 
-type AnimeRankingType int
+type RankingType int
 
 const (
-	RankTopAnime AnimeRankingType = iota + 1
+	RankTopAnime RankingType = iota + 1
 	RankTopAiring
 	RankTopUpcoming
 	RankTopTV
@@ -14,7 +14,7 @@ const (
 	RankFavorited
 )
 
-var rankStrDict = map[AnimeRankingType]string{
+var rankStrDict = map[RankingType]string{
 	RankTopAnime:     "all",
 	RankTopAiring:    "airing",
 	RankTopUpcoming:  "upcoming",
@@ -26,7 +26,7 @@ var rankStrDict = map[AnimeRankingType]string{
 	RankFavorited:    "favorite",
 }
 
-func (rankingType AnimeRankingType) String() string {
+func (rankingType RankingType) String() string {
 	rankingTypeStr := "unknown"
 
 	if str, ok := rankStrDict[rankingType]; ok {

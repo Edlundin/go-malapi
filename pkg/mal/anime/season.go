@@ -1,22 +1,22 @@
 package anime
 
-type AnimeSeason int
+type Season int
 
 const (
-	SeasonWinter AnimeSeason = iota + 1
+	SeasonWinter Season = iota + 1
 	SeasonSpring
 	SeasonSummer
 	SeasonFall
 )
 
-var seasonStrDict = map[AnimeSeason]string{
+var seasonStrDict = map[Season]string{
 	SeasonWinter: "winter",
 	SeasonSpring: "spring",
 	SeasonSummer: "summer",
 	SeasonFall:   "fall",
 }
 
-func (season AnimeSeason) String() string {
+func (season Season) String() string {
 	seasonStr := "unknown"
 
 	if str, ok := seasonStrDict[season]; ok {
