@@ -1,11 +1,16 @@
 package anime
 
+//Season represents a season (or trimester) during which animes are airing.
 type Season int
 
 const (
+	//SeasonWinter represents the winter timester.
 	SeasonWinter Season = iota + 1
+	//SeasonSpring represents the spring timester.
 	SeasonSpring
+	//SeasonSummer represents the summer timester.
 	SeasonSummer
+	//SeasonFall represents the fall timester.
 	SeasonFall
 )
 
