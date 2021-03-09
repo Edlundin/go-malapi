@@ -30,3 +30,9 @@ func (season Season) String() string {
 
 	return seasonStr
 }
+
+//SeasonObject represents a season JSON object
+type SeasonObject struct {
+	Season Season `json:"season"`
+	Year   int    `json:"year"`
+}
