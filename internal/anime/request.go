@@ -10,7 +10,7 @@ import (
 	"github.com/Edlundin/go-malapi/pkg/mal/anime"
 )
 
-func animeFieldsToQueryArguments(animeFields []anime.Field) string { //! TODO: test this function
+func animeFieldsToQueryArguments(animeFields []anime.Field) string {
 	var getParams string
 
 	if len(animeFields) > 0 {
