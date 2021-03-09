@@ -6,9 +6,11 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"github.com/Edlundin/go-malapi/pkg/mal/anime"
 )
 
-func animeFieldsToQueryArguments(animeFields []Field) string { //! TODO: test this function
+func animeFieldsToQueryArguments(animeFields []anime.Field) string { //! TODO: test this function
 	var getParams string
 
 	if len(animeFields) > 0 {
@@ -41,7 +43,7 @@ func animeFieldsToQueryArguments(animeFields []Field) string { //! TODO: test th
 //The limit parameter limits the maximum number of animes returned by the API. If limit equals 0, MAL's API will return a list of up to a hundred animes (a hundred is the default value).
 //The offset (or paging) is used to ignore the first x animes found by the API (where x is the offset value). The ignored animes are not counted toward the limit. The default offset value is 0.
 //The fields limits the details per anime returned by the API. If the array is empty, the API will return all the available fields for all found animes.
-func GenerateGetAnimeListRequest(malAPIBaseURL string, bearerToken string, animeTitle string, limit uint, offset uint, fields []Field) (*http.Request, error) {
+func GenerateGetAnimeListRequest(malAPIBaseURL string, bearerToken string, animeTitle string, limit uint, offset uint, fields []anime.Field) (*http.Request, error) {
 	const endPoint string = "/anime"
 
 	if limit == 0 {
@@ -72,7 +74,7 @@ func GenerateGetAnimeListRequest(malAPIBaseURL string, bearerToken string, anime
 //The bearer token is the access token obtained through the OAuth2 identification.
 //The anime ID of the anime the API will get details for.
 //The fields limits the details per anime returned by the API. If the array is empty, the API will return all the available fields for all found animes.
-func GenerateGetAnimeDetailsRequest(malAPIBaseURL string, bearerToken string, animeID uint, fields []Field) (*http.Request, error) {
+func GenerateGetAnimeDetailsRequest(malAPIBaseURL string, bearerToken string, animeID uint, fields []anime.Field) (*http.Request, error) {
 	var endPoint string = fmt.Sprintf("/anime/%d", animeID)
 
 	req, err := http.NewRequest(http.MethodGet, malAPIBaseURL+endPoint, nil)
@@ -98,7 +100,7 @@ func GenerateGetAnimeDetailsRequest(malAPIBaseURL string, bearerToken string, an
 //The limit parameter limits the maximum number of animes returned by the API. If limit equals 0, MAL's API will return a list of up to a hundred animes (a hundred is the default value).
 //The offset (or paging) is used to ignore the first x animes found by the API (where x is the offset value). The ignored animes are not counted toward the limit. The default offset value is 0.
 //The fields limits the details per anime returned by the API. If the array is empty, the API will return all the available fields for all found animes.
-func GenerateGetAnimeRankingRequest(malAPIBaseURL string, bearerToken string, rankingType RankingType, limit uint, offset uint, fields []Field) (*http.Request, error) {
+func GenerateGetAnimeRankingRequest(malAPIBaseURL string, bearerToken string, rankingType anime.RankingType, limit uint, offset uint, fields []anime.Field) (*http.Request, error) {
 	const endPoint string = "/anime/ranking"
 
 	if limit == 0 {
@@ -130,7 +132,7 @@ func GenerateGetAnimeRankingRequest(malAPIBaseURL string, bearerToken string, ra
 //The limit parameter limits the maximum number of animes returned by the API. If limit equals 0, MAL's API will return a list of up to a hundred animes (a hundred is the default value).
 //The offset (or paging) is used to ignore the first x animes found by the API (where x is the offset value). The ignored animes are not counted toward the limit. The default offset value is 0.
 //The fields limits the details per anime returned by the API. If the array is empty, the API will return all the available fields for all found animes.
-func GenerateGetSeasonalAnimes(malAPIBaseURL string, bearerToken string, year uint, season Season, sortBy Sort, limit uint, offset uint, fields []Field) (*http.Request, error) {
+func GenerateGetSeasonalAnimes(malAPIBaseURL string, bearerToken string, year uint, season anime.Season, sortBy anime.Sort, limit uint, offset uint, fields []anime.Field) (*http.Request, error) {
 	var endPoint string = fmt.Sprintf("/anime/ranking/%d/%s", year, season)
 
 	if limit == 0 {
@@ -162,7 +164,7 @@ func GenerateGetSeasonalAnimes(malAPIBaseURL string, bearerToken string, year ui
 //The limit parameter limits the maximum number of animes returned by the API. If limit equals 0, MAL's API will return a list of up to a hundred animes (a hundred is the default value).
 //The offset (or paging) is used to ignore the first x animes found by the API (where x is the offset value). The ignored animes are not counted toward the limit. The default offset value is 0.
 //The fields limits the details per anime returned by the API. If the array is empty, the API will return all the available fields for all found animes.
-func GenerateGetSuggestedAnimes(malAPIBaseURL string, bearerToken string, limit uint, offset uint, fields []Field) (*http.Request, error) {
+func GenerateGetSuggestedAnimes(malAPIBaseURL string, bearerToken string, limit uint, offset uint, fields []anime.Field) (*http.Request, error) {
 	const endPoint string = "/anime/suggestion"
 
 	if limit == 0 {
