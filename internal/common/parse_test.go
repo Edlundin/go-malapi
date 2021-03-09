@@ -1,3 +1,5 @@
+package common
+
 import "testing"
 
 func TestParseError(t *testing.T) {
