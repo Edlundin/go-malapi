@@ -2,23 +2,23 @@ import "testing"
 
 func TestParseError(t *testing.T) {
 	if _, err := ParseError([]byte("")); err == nil {
-		t.Errorf("failed to pass empty string: no error returned")
+		t.Error("failed to pass empty string: no error returned")
 	}
 
 	if _, err := ParseError([]byte(" ")); err == nil {
-		t.Errorf("failed to pass space string: no error returned")
+		t.Error("failed to pass space string: no error returned")
 	}
 
 	if _, err := ParseError([]byte("{}")); err == nil {
-		t.Errorf("failed to pass empty JSON object: no error returned")
+		t.Error("failed to pass empty JSON object: no error returned")
 	}
 
 	if _, err := ParseError([]byte("{message: error message, error: error message}")); err == nil {
-		t.Errorf("failed to pass malformed JSON object: no error returned")
+		t.Error("failed to pass malformed JSON object: no error returned")
 	}
 
 	if _, err := ParseError([]byte("{\"message\": \"error message\", error: error message}")); err == nil {
-		t.Errorf("failed to pass partially malformed JSON object: no error returned")
+		t.Error("failed to pass partially malformed JSON object: no error returned")
 	}
 
 	if malError, err := ParseError([]byte("{\"message\":\"error message\", \"pollution\":\"pollution string\", \"error\":\"error type\",\"pollution\":\"pollution string\"}")); err != nil {
