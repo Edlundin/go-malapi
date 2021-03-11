@@ -7,7 +7,7 @@ import (
 	"github.com/Edlundin/go-malapi/pkg/mal/common"
 )
 
-//ParseError parses MAL's JSON error message.
+//ParseError parses MAL's JSON "error" object.
 func ParseError(responseBody []byte) (common.Error, error) {
 	var malError common.Error
 
@@ -26,4 +26,17 @@ func ParseError(responseBody []byte) (common.Error, error) {
 	}
 
 	return malError, nil
+}
+
+//ParsePaging parses MAL's JSON "paging" object.
+func ParsePaging(responseBody []byte) (common.Paging, error) {
+	var paging common.Paging
+
+	err := json.Unmarshal(responseBody, &paging)
+
+	if err != nil {
+		return paging, err
+	}
+
+	return paging, nil
 }
