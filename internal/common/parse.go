@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Edlundin/go-malapi/pkg/mal"
+	"github.com/Edlundin/go-malapi/pkg/mal/common"
 )
 
 //ParseError parses MAL's JSON error message.
-func ParseError(responseBody []byte) (mal.Error, error) {
-	var malError mal.Error
+func ParseError(responseBody []byte) (common.Error, error) {
+	var malError common.Error
 
 	err := json.Unmarshal(responseBody, &malError)
 
