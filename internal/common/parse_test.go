@@ -67,27 +67,35 @@ func TestParsePaging(t *testing.T) {
 		t.Error("failed to pass malformed JSON object: no error returned")
 	}
 
+	if _, err := ParseError([]byte("{\"previous\": \"https://google.com\", next: https://myanimelist.net/}")); err == nil {
+		t.Error("failed to pass partially malformed JSON object: no error returned")
+	}
+
+	if _, err := ParseError([]byte("{\"previous\": \"https://google.com\", next: \"\"}")); err == nil {
+		t.Error("failed to pass well formed JSON object with empty value properties: no error returned")
+	}
+
 	if paging, err := ParsePaging([]byte("{\"previous\":\"https://google.com\", \"pollution\":\"pollution string\", \"next\":\"https://myanimelist.net/\",\"pollution\":\"pollution string\"}")); err != nil {
 		t.Errorf("failed to pass polluted JSON object: %s", err.Error())
 	} else if paging.PreviousURL.String() != "https://google.com" {
-		t.Errorf("%q != %q", paging.PreviousURL.String(), "https://google.fr")
+		t.Errorf("failed to pass polluted JSON object: %q: %q != %q", "previous", paging.PreviousURL.String(), "https://google.com")
 	} else if paging.NextURL.String() != "https://myanimelist.net/" {
-		t.Errorf("%q != %q", paging.NextURL.String(), "https://myanimelist.net/")
+		t.Errorf("failed to pass polluted JSON object: %q: %q != %q", "next", paging.NextURL.String(), "https://myanimelist.net/")
 	}
 
 	if paging, err := ParsePaging([]byte("{\"pollution\":\"pollution string\", \"previous\":\"https://google.com\", \"next\":\"https://myanimelist.net/\"}")); err != nil {
 		t.Errorf("failed to pass polluted JSON object: %s", err.Error())
 	} else if paging.PreviousURL.String() != "https://google.com" {
-		t.Errorf("%q != %q", paging.PreviousURL.String(), "https://google.fr")
+		t.Errorf("failed to pass polluted JSON object: %q: %q != %q", "previous", paging.PreviousURL.String(), "https://google.com")
 	} else if paging.NextURL.String() != "https://myanimelist.net/" {
-		t.Errorf("%q != %q", paging.NextURL.String(), "https://myanimelist.net/")
+		t.Errorf("failed to pass polluted JSON object: %q: %q != %q", "next", paging.NextURL.String(), "https://myanimelist.net/")
 	}
 
 	if paging, err := ParsePaging([]byte("{\"previous\":\"https://google.com\", \"next\":\"https://myanimelist.net/\"}")); err != nil {
-		t.Errorf("failed to pass correct JSON object: %s", err.Error())
+		t.Errorf("failed to pass well JSON object: %s", err.Error())
 	} else if paging.PreviousURL.String() != "https://google.com" {
-		t.Errorf("%q != %q", paging.PreviousURL.String(), "https://google.com")
+		t.Errorf("failed to pass well JSON object: %q: %q != %q", "previous", paging.PreviousURL.String(), "https://google.com")
 	} else if paging.NextURL.String() != "https://myanimelist.net/" {
-		t.Errorf("%q != %q", paging.NextURL.String(), "https://myanimelist.net/")
+		t.Errorf("failed to pass well JSON object: %q: %q != %q", "next", paging.NextURL.String(), "https://myanimelist.net/")
 	}
 }
