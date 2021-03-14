@@ -17,36 +17,40 @@ func TestParseError(t *testing.T) {
 		t.Error("failed to pass empty JSON object: no error returned")
 	}
 
-	if _, err := ParseError([]byte("{message: error message, error: error message}")); err == nil {
+	if _, err := ParseError([]byte("{message: error message, error: error type}")); err == nil {
 		t.Error("failed to pass malformed JSON object: no error returned")
 	}
 
-	if _, err := ParseError([]byte("{\"message\": \"error message\", error: error message}")); err == nil {
+	if _, err := ParseError([]byte("{\"message\": \"error message\", error: error type}")); err == nil {
 		t.Error("failed to pass partially malformed JSON object: no error returned")
+	}
+
+	if _, err := ParseError([]byte("{\"message\": \"error message\", error: \"\"}")); err == nil {
+		t.Error("failed to pass well formed JSON object with empty value properties: no error returned")
 	}
 
 	if malError, err := ParseError([]byte("{\"message\":\"error message\", \"pollution\":\"pollution string\", \"error\":\"error type\",\"pollution\":\"pollution string\"}")); err != nil {
 		t.Errorf("failed to pass polluted JSON object: %s", err.Error())
 	} else if malError.Message != "error message" {
-		t.Errorf("%q != %q", malError.Message, "message error")
+		t.Errorf("failed to pass polluted formed JSON object: %s: %q != %q", "message", malError.Message, "message error")
 	} else if malError.Error != "error type" {
-		t.Errorf("%q != %q", malError.Error, "error type")
+		t.Errorf("failed to pass polluted formed JSON object: %s: %q != %q", "error", malError.Error, "error type")
 	}
 
 	if malError, err := ParseError([]byte("{\"pollution\":\"pollution string\", \"message\":\"error message\", \"error\":\"error type\"}")); err != nil {
 		t.Errorf("failed to pass polluted JSON object: %s", err.Error())
 	} else if malError.Message != "error message" {
-		t.Errorf("%q != %q", malError.Message, "message error")
+		t.Errorf("failed to pass polluted formed JSON object: %s: %q != %q", "message", malError.Message, "message error")
 	} else if malError.Error != "error type" {
-		t.Errorf("%q != %q", malError.Error, "error type")
+		t.Errorf("failed to pass polluted formed JSON object: %s: %q != %q", "error", malError.Error, "error type")
 	}
 
 	if malError, err := ParseError([]byte("{\"message\":\"error message\", \"error\":\"error type\"}")); err != nil {
-		t.Errorf("failed to pass correct JSON object: %s", err.Error())
+		t.Errorf("failed to pass well formed JSON object: %s", err.Error())
 	} else if malError.Message != "error message" {
-		t.Errorf("%q != %q", malError.Message, "message error")
+		t.Errorf("failed to pass well formed JSON object: %s: %q != %q", "message", malError.Message, "message error")
 	} else if malError.Error != "error type" {
-		t.Errorf("%q != %q", malError.Error, "error type")
+		t.Errorf("failed to pass well formed JSON object: %s: %q != %q", "error", malError.Error, "error type")
 	}
 }
 
