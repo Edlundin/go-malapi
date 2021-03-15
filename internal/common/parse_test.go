@@ -103,3 +103,33 @@ func TestParsePaging(t *testing.T) {
 		t.Errorf("failed to pass well JSON object: %q: %q != %q", "next", paging.NextURL.String(), "https://myanimelist.net/")
 	}
 }
+
+func TestParseCalendarDate(t *testing.T) {
+	if _, err := ParseCalendarDate([]byte("\"\"")); err == nil {
+		t.Error("failed to pass empty string: no error returned")
+	}
+
+	if _, err := ParseCalendarDate([]byte("\" \"")); err == nil {
+		t.Error("failed to pass space string: no error returned")
+	}
+
+	if _, err := ParseCalendarDate([]byte("\"1958-12-48\"")); err == nil {
+		t.Error("failed to pass malformed date (48th day of the month): no error returned")
+	}
+
+	if _, err := ParseCalendarDate([]byte("\"1958-15-03\"")); err == nil {
+		t.Error("failed to pass malformed date (15th month of the year): no error returned")
+	}
+
+	if calDate, err := ParseCalendarDate([]byte("\"1958-12-03\"")); err != nil {
+		t.Errorf("failed to pass well formed date: %s", err.Error())
+	} else if calDate.Year() != 1958 {
+		t.Errorf("failed to pass well formed date: year: %d != %d", calDate.Year(), 1958)
+	} else if int(calDate.Month()) != 12 {
+		t.Errorf("failed to pass well formed date: month: %d != %d", calDate.Month(), 12)
+	} else if calDate.Day() != 3 {
+		t.Errorf("failed to pass well formed date: day: %d != %d", calDate.Day(), 3)
+	} else if calDate.String() != "1958-12-03" {
+		t.Errorf("failed to pass well formed date: day: %q != %q", calDate.String(), "1958-12-03")
+	}
+}

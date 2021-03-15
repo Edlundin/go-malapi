@@ -40,3 +40,16 @@ func ParsePaging(responseBody []byte) (common.Paging, error) {
 
 	return paging, nil
 }
+
+//ParseCalendarDate parses MAL's JSON "end_date" and "start_date" (format YYYY-MM-DD) properties.
+func ParseCalendarDate(responseBody []byte) (common.CalendarDate, error) {
+	var calDate common.CalendarDate
+
+	err := json.Unmarshal(responseBody, &calDate)
+
+	if err != nil {
+		return calDate, err
+	}
+
+	return calDate, nil
+}
