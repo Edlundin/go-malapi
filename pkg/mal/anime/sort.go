@@ -1,5 +1,10 @@
 package anime
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 //Sort is an enum reprenting the different sorting possibilities.
 type Sort int
 
@@ -23,4 +28,28 @@ func (sort Sort) String() string {
 	}
 
 	return sortStr
+}
+
+func (s *Sort) UnmarshalJSON(b []byte) error {
+	var sortStr string
+
+	if err := json.Unmarshal(b, &sortStr); err != nil {
+		return err
+	}
+
+	found := false
+
+	for k, v := range sortStrDict {
+		if v == sortStr {
+			*s = k
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return fmt.Errorf("%q is not a sorting type", sortStr)
+	}
+
+	return nil
 }
