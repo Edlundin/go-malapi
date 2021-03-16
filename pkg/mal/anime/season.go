@@ -1,5 +1,10 @@
 package anime
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 //Season represents a season (or trimester) during which animes are airing.
 type Season int
 
@@ -29,6 +34,30 @@ func (season Season) String() string {
 	}
 
 	return seasonStr
+}
+
+func (s *Season) UnmarshalJSON(b []byte) error {
+	var seasonStr string
+
+	if err := json.Unmarshal(b, &seasonStr); err != nil {
+		return err
+	}
+
+	found := false
+
+	for k, v := range seasonStrDict {
+		if v == seasonStr {
+			*s = k
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return fmt.Errorf("%q is not a season", seasonStr)
+	}
+
+	return nil
 }
 
 //SeasonObject represents a season JSON object
