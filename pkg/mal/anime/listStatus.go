@@ -1,6 +1,10 @@
 package anime
 
-import "time"
+import (
+	"encoding/json"
+	"fmt"
+	"time"
+)
 
 //ListStatus represents a MyAnimeList list.
 type ListStatus int
@@ -26,6 +30,30 @@ var listStatusStrDict = map[ListStatus]string{
 	ListStatusPlanToWatch: "plan_to_watch",
 }
 
+func (l *ListStatus) UnmarshalJSON(b []byte) error {
+	var listStatusStr string
+
+	if err := json.Unmarshal(b, &listStatusStr); err != nil {
+		return err
+	}
+
+	found := false
+
+	for k, v := range listStatusStrDict {
+		if v == listStatusStr {
+			*l = k
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		return fmt.Errorf("%q is not a sorting type", listStatusStr)
+	}
+
+	return nil
+}
+
 func (season ListStatus) String() string {
 	listStatusStr := "unknown"
 
@@ -36,8 +64,8 @@ func (season ListStatus) String() string {
 	return listStatusStr
 }
 
-//ListStatusObject represents a MyListStatus JSON object
-type ListStatusObject struct {
+//MyListStatus represents a MyListStatus JSON object
+type MyListStatus struct {
 	Comments            string     `json:"comments"`
 	IsRewatching        bool       `json:"is_rewatching"`
 	WatchedEpisodeCount int        `json:"num_episodes_watched"`
