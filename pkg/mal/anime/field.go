@@ -22,7 +22,7 @@ const (
 	FieldCreatedAt                        Field = "created_at"
 	FieldUpdatedAt                        Field = "updated_at"
 	FieldMediaType                        Field = "media_type"
-	FieldStatus                           Field = "finished_airing"
+	FieldStatus                           Field = "finished_airing" //* only works when submitted to a particular anime (/anime/$id)
 	FieldGenres                           Field = "genres"
 	FieldMyListStatusStatus               Field = "my_list_status{status}"
 	FieldMyListStatusScore                Field = "my_list_status{score}"
@@ -37,11 +37,11 @@ const (
 	FieldSource                           Field = "source"
 	FieldAverageEpisodeDuration           Field = "average_episode_duration"
 	FieldPgRating                         Field = "rating"
-	FieldPictures                         Field = "pictures"
-	FieldBackground                       Field = "background"
+	FieldPictures                         Field = "pictures"        //* only works when submitted to a particular anime (/anime/$id)
+	FieldBackground                       Field = "background"      //* only works when submitted to a particular anime (/anime/$id)
 	FieldRelatedAnime                     Field = "related_anime"   //* only works when submitted to a particular anime (/anime/$id)
 	FieldRelatedManga                     Field = "related_manga"   //* only works when submitted to a particular anime (/anime/$id)
-	FieldRecommendations                  Field = "recommendations" //* only works when submitted to a particular anime (/anime/$id), return []Anime
+	FieldRecommendations                  Field = "recommendations" //* only works when submitted to a particular anime (/anime/$id), returns []Anime
 	FieldStudios                          Field = "studios"
 	FieldStatisticsStatus                 Field = "statistics{status}"
 	FieldStatisticsEnlistedCount          Field = "statistics{num_list_users}"
