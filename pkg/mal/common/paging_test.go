@@ -1,34 +1,37 @@
 package common
 
-import "testing"
+import (
+	"encoding/json"
+	"testing"
+)
 
 func Test_jsonURL_UnmarshalJSON(t *testing.T) {
 	jURL := jsonURL{}
 
 	//Testing malformed URL (empty string)
-	if err := jURL.UnmarshalJSON([]byte("\"\"")); err == nil {
+	if err := json.Unmarshal([]byte(`""`), &jURL); err == nil {
 		t.Error("failed to pass empty string: no error returned")
 	}
 
 	//Testing malformed URL (string composed of one space)
-	if err := jURL.UnmarshalJSON([]byte("\" \"")); err == nil {
+	if err := json.Unmarshal([]byte(`" "`), &jURL); err == nil {
 		t.Error("failed to pass space string: no error returned")
 	}
 
 	//Testing malformed URL (missing scheme)
-	if err := jURL.UnmarshalJSON([]byte("\"myanimelist.net\"")); err == nil {
+	if err := json.Unmarshal([]byte(`"myanimelist.net"`), &jURL); err == nil {
 		t.Errorf("failed to pass malformed URL: no error returned")
 	}
 
 	//Testing well formed URL without arguments
-	if err := jURL.UnmarshalJSON([]byte("\"https://myanimelist.net\"")); err != nil {
+	if err := json.Unmarshal([]byte(`"https://myanimelist.net"`), &jURL); err != nil {
 		t.Errorf("failed to pass well formed URL: %q", err.Error())
 	} else if jURL.String() != "https://myanimelist.net" {
 		t.Errorf("failed to pass well formed URL: URL: %q != %q", jURL.String(), "https://myanimelist.net")
 	}
 
 	//Testing well formed URL with one argument
-	if err := jURL.UnmarshalJSON([]byte("\"https://myanimelist.net?arg=test\"")); err != nil {
+	if err := json.Unmarshal([]byte(`"https://myanimelist.net?arg=test"`), &jURL); err != nil {
 		t.Errorf("failed to pass well formed URL: %q", err.Error())
 	} else {
 		for k := range jURL.Query() {
@@ -44,7 +47,7 @@ func Test_jsonURL_UnmarshalJSON(t *testing.T) {
 	}
 
 	//Testing well formed URL with two arguments
-	if err := jURL.UnmarshalJSON([]byte("\"https://myanimelist.net?arg=test&arg2=0\"")); err != nil {
+	if err := json.Unmarshal([]byte(`"https://myanimelist.net?arg=test&arg2=0"`), &jURL); err != nil {
 		t.Errorf("failed to pass well formed URL: %q", err.Error())
 	} else {
 		for k := range jURL.Query() {
@@ -64,7 +67,7 @@ func Test_jsonURL_UnmarshalJSON(t *testing.T) {
 	}
 
 	//Testing well formed URL with more than two arguments with mixed separator
-	if err := jURL.UnmarshalJSON([]byte("\"https://myanimelist.net?arg=test&arg2=0&arg3=test1;test2&arg4=1970-01-01\"")); err != nil {
+	if err := json.Unmarshal([]byte(`"https://myanimelist.net?arg=test&arg2=0&arg3=test1;test2&arg4=1970-01-01"`), &jURL); err != nil {
 		t.Errorf("failed to pass well formed URL: %q", err.Error())
 	} else {
 		for k := range jURL.Query() {

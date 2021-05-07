@@ -6,10 +6,21 @@ import (
 )
 
 func Test_Recommendation_UnmarshalJSON(t *testing.T) {
-	//TODO: test array
 	singleRecommendation := `{"node":{"id":1535,"title":"Death Note","main_picture":{"medium":"https://api-cdn.myanimelist.net/images/anime/9/9453.jpg","large":"https://api-cdn.myanimelist.net/images/anime/9/9453l.jpg"}},"num_recommendations":561}`
 
 	recommendation := Recommendation{}
+
+	if err := json.Unmarshal([]byte(`""`), &recommendation); err == nil {
+		t.Error("failed to pass empty string: no error returned")
+	}
+
+	if err := json.Unmarshal([]byte(`" "`), &recommendation); err == nil {
+		t.Error("failed to pass space string: no error returned")
+	}
+
+	if err := json.Unmarshal([]byte(`"test"`), &recommendation); err == nil {
+		t.Errorf("failed to pass malformed weekday status (%q): no error returned", "test")
+	}
 
 	if err := json.Unmarshal([]byte(singleRecommendation), &recommendation); err != nil {
 		t.Errorf("failed to pass correct recommendation: %s", err.Error())
