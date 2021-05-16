@@ -48,7 +48,7 @@ func (l *ListStatus) UnmarshalJSON(b []byte) error {
 	}
 
 	if !found {
-		return fmt.Errorf("%q is not a sorting type", listStatusStr)
+		return fmt.Errorf("%q is not a list status", listStatusStr)
 	}
 
 	return nil

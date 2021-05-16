@@ -37,7 +37,7 @@ func (j *jsonWeekday) UnmarshalJSON(b []byte) error {
 	case "sunday":
 		j.Weekday = time.Sunday
 	default:
-		return fmt.Errorf("%q is not a sorting type", str)
+		return fmt.Errorf("%q is not a day", str)
 	}
 
 	return nil
