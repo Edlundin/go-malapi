@@ -1,4 +1,4 @@
-module github.com/Edlundin/go-malapi
+module github.com/edlundin/go-malapi
 
 go 1.15
 

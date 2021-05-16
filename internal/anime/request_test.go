@@ -3,7 +3,7 @@ package anime
 import (
 	"testing"
 
-	"github.com/Edlundin/go-malapi/pkg/mal/anime"
+	"github.com/edlundin/go-malapi/pkg/mal/anime"
 )
 
 func TestAnimeFieldsToQueryArguments(t *testing.T) {

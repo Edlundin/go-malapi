@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Edlundin/go-malapi/pkg/mal/anime"
+	"github.com/edlundin/go-malapi/pkg/mal/anime"
 )
 
 func animeFieldsToQueryArguments(animeFields []anime.Field) string {

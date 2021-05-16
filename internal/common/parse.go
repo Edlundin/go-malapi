@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/Edlundin/go-malapi/pkg/mal/common"
+	"github.com/edlundin/go-malapi/pkg/mal/common"
 )
 
 //ParseError parses MAL's JSON "error" object.
