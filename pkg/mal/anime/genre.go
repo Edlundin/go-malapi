@@ -125,6 +125,8 @@ func (g *GenreEnum) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+//String returns the string representation of an enum value.
+//If the value is not valid (e.g. undefined enum value), this functions returns "undefined".
 func (g GenreEnum) String() string {
 	genreStr := "undefined"
 

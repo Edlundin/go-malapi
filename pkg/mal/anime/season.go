@@ -26,6 +26,8 @@ var seasonStrDict = map[Season]string{
 	SeasonFall:   "fall",
 }
 
+//String returns the string representation of an enum value.
+//If the value is not valid (e.g. undefined enum value), this functions returns "undefined".
 func (season Season) String() string {
 	seasonStr := "undefined"
 

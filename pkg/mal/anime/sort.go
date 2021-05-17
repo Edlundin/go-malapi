@@ -20,6 +20,8 @@ var sortStrDict = map[Sort]string{
 	SortByUserListCount: "anime_num_list_users",
 }
 
+//String returns the string representation of an enum value.
+//If the value is not valid (e.g. undefined enum value), this functions returns "undefined".
 func (sort Sort) String() string {
 	sortStr := "undefined"
 
