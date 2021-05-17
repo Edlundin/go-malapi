@@ -21,7 +21,7 @@ var sortStrDict = map[Sort]string{
 }
 
 func (sort Sort) String() string {
-	sortStr := "unknown"
+	sortStr := "undefined"
 
 	if str, ok := sortStrDict[sort]; ok {
 		sortStr = str

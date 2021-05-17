@@ -126,7 +126,7 @@ func (g *GenreEnum) UnmarshalJSON(b []byte) error {
 }
 
 func (g GenreEnum) String() string {
-	genreStr := "unknown"
+	genreStr := "undefined"
 
 	if str, ok := genreStrDict[g]; ok {
 		genreStr = str

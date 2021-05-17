@@ -27,7 +27,7 @@ var seasonStrDict = map[Season]string{
 }
 
 func (season Season) String() string {
-	seasonStr := "unknown"
+	seasonStr := "undefined"
 
 	if str, ok := seasonStrDict[season]; ok {
 		seasonStr = str

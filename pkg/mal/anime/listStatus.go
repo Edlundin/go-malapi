@@ -55,7 +55,7 @@ func (l *ListStatus) UnmarshalJSON(b []byte) error {
 }
 
 func (season ListStatus) String() string {
-	listStatusStr := "unknown"
+	listStatusStr := "undefined"
 
 	if str, ok := listStatusStrDict[season]; ok {
 		listStatusStr = str
