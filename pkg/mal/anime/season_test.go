@@ -2,6 +2,7 @@ package anime
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 )
 
@@ -20,27 +21,31 @@ func Test_Season_UnmarshalJSON(t *testing.T) {
 		t.Errorf("failed to pass malformed season (%q): no error returned", "test")
 	}
 
-	if err := json.Unmarshal([]byte(`"winter"`), &season); err != nil {
-		t.Errorf("failed to pass well formed season: %s", err.Error())
-	} else if season != SeasonWinter {
-		t.Errorf("failed to pass well formed season: %q != %q", season.String(), SeasonWinter.String())
+	for seasonEnum, seasonStr := range seasonStrDict {
+		if err := json.Unmarshal([]byte(fmt.Sprintf("%q", seasonStr)), &season); err != nil {
+			t.Errorf("failed to pass well formed season: %s", err.Error())
+		} else if season != seasonEnum {
+			t.Errorf("failed to pass well formed season: %q(%d) != %q(%d)", season.String(), season, seasonStr, seasonEnum)
+		}
+	}
+}
+
+func Test_Season_String(t *testing.T) {
+	for seasonEnum, seasonStr := range seasonStrDict {
+		if seasonEnum.String() != seasonStr {
+			t.Errorf("failed to pass existing season: %q != %q for enum value %d", seasonEnum.String(), seasonStr, seasonEnum)
+		}
 	}
 
-	if err := json.Unmarshal([]byte(`"fall"`), &season); err != nil {
-		t.Errorf("failed to pass well formed season: %s", err.Error())
-	} else if season != SeasonFall {
-		t.Errorf("failed to pass well formed season: %q != %q", season.String(), SeasonFall.String())
+	var season Season
+
+	if season.String() != "undefined" {
+		t.Error(`failed to pass un-initialized season: the returned string should be "undefined"`)
 	}
 
-	if err := json.Unmarshal([]byte(`"summer"`), &season); err != nil {
-		t.Errorf("failed to pass well formed season: %s", err.Error())
-	} else if season != SeasonSummer {
-		t.Errorf("failed to pass well formed season: %q != %q", season.String(), SeasonSummer.String())
-	}
+	season = Season(-1)
 
-	if err := json.Unmarshal([]byte(`"spring"`), &season); err != nil {
-		t.Errorf("failed to pass well formed season: %s", err.Error())
-	} else if season != SeasonSpring {
-		t.Errorf("failed to pass well formed season: %q != %q", season.String(), SeasonSpring.String())
+	if season.String() != "undefined" {
+		t.Error(`failed to pass undefined season: the returned string should be "undefined"`)
 	}
 }

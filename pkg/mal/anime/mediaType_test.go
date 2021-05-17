@@ -43,7 +43,7 @@ func Test_MediaType_String(t *testing.T) {
 		t.Error(`failed to pass un-initialized media type: the returned string should be "undefined"`)
 	}
 
-	mediaType = MediaTypeUnknown + 5
+	mediaType = MediaType(-1)
 
 	if mediaType.String() != "undefined" {
 		t.Error(`failed to pass undefined media type: the returned string should be "undefined"`)

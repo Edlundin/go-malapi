@@ -2,6 +2,7 @@ package anime
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 )
 
@@ -20,33 +21,31 @@ func Test_ListStatus_UnmarshalJSON(t *testing.T) {
 		t.Errorf("failed to pass malformed list status (%q): no error returned", "test")
 	}
 
-	if err := json.Unmarshal([]byte(`"watching"`), &listStatus); err != nil {
-		t.Errorf("failed to pass well formed list status: %s", err.Error())
-	} else if listStatus != ListStatusWatching {
-		t.Errorf("failed to pass well formed list status: %q != %q", listStatus.String(), ListStatusWatching.String())
+	for listStatusEnum, listStatusStr := range listStatusStrDict {
+		if err := json.Unmarshal([]byte(fmt.Sprintf("%q", listStatusStr)), &listStatus); err != nil {
+			t.Errorf("failed to pass well formed list status: %s", err.Error())
+		} else if listStatus != listStatusEnum {
+			t.Errorf("failed to pass well formed list status: %q(%d) != %q(%d)", listStatus.String(), listStatus, listStatusStr, listStatusEnum)
+		}
+	}
+}
+
+func Test_ListStatus_String(t *testing.T) {
+	for listStatusEnum, listStatusStr := range mediaTypeStrDict {
+		if listStatusEnum.String() != listStatusStr {
+			t.Errorf("failed to pass existing list status: %q != %q for enum value %d", listStatusEnum.String(), listStatusStr, listStatusEnum)
+		}
 	}
 
-	if err := json.Unmarshal([]byte(`"completed"`), &listStatus); err != nil {
-		t.Errorf("failed to pass well formed list status: %s", err.Error())
-	} else if listStatus != ListStatusCompleted {
-		t.Errorf("failed to pass well formed list status: %q != %q", listStatus.String(), ListStatusCompleted.String())
+	var listStatus ListStatus
+
+	if listStatus.String() != "undefined" {
+		t.Error(`failed to pass un-initialized list status: the returned string should be "undefined"`)
 	}
 
-	if err := json.Unmarshal([]byte(`"dropped"`), &listStatus); err != nil {
-		t.Errorf("failed to pass well formed list status: %s", err.Error())
-	} else if listStatus != ListStatusDropped {
-		t.Errorf("failed to pass well formed list status: %q != %q", listStatus.String(), ListStatusDropped.String())
-	}
+	listStatus = ListStatus(-1)
 
-	if err := json.Unmarshal([]byte(`"on_hold"`), &listStatus); err != nil {
-		t.Errorf("failed to pass well formed list status: %s", err.Error())
-	} else if listStatus != ListStatusOnHold {
-		t.Errorf("failed to pass well formed list status: %q != %q", listStatus.String(), ListStatusOnHold.String())
-	}
-
-	if err := json.Unmarshal([]byte(`"plan_to_watch"`), &listStatus); err != nil {
-		t.Errorf("failed to pass well formed list status: %s", err.Error())
-	} else if listStatus != ListStatusPlanToWatch {
-		t.Errorf("failed to pass well formed list status: %q != %q", listStatus.String(), ListStatusPlanToWatch.String())
+	if listStatus.String() != "undefined" {
+		t.Error(`failed to pass undefined list status: the returned string should be "undefined"`)
 	}
 }

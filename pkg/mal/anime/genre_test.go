@@ -18,14 +18,34 @@ func Test_GenreEnum_UnmarshalJSON(t *testing.T) {
 	}
 
 	if err := json.Unmarshal([]byte(`"test"`), &genre); err == nil {
-		t.Errorf("failed to pass malformed list status (%q): no error returned", "test")
+		t.Errorf("failed to pass malformed genre (%q): no error returned", "test")
 	}
 
-	for k, v := range genreStrDict {
-		if err := json.Unmarshal([]byte(fmt.Sprintf("%q", v)), &genre); err != nil {
-			t.Errorf("failed to pass well formed list status: %s", err.Error())
-		} else if genre != k {
-			t.Errorf("failed to pass well formed list status: %q(%d) != %q(%d)", genre.String(), genre, v, k)
+	for genreEnum, genreStr := range genreStrDict {
+		if err := json.Unmarshal([]byte(fmt.Sprintf("%q", genreStr)), &genre); err != nil {
+			t.Errorf("failed to pass well formed genre: %s", err.Error())
+		} else if genre != genreEnum {
+			t.Errorf("failed to pass well formed genre: %q(%d) != %q(%d)", genre.String(), genre, genreStr, genreEnum)
 		}
+	}
+}
+
+func Test_GenreEnum_String(t *testing.T) {
+	for genreEnum, genreStr := range genreStrDict {
+		if genreEnum.String() != genreStr {
+			t.Errorf("failed to pass existing genre: %q != %q for enum value %d", genreEnum.String(), genreStr, genreEnum)
+		}
+	}
+
+	var genre GenreEnum
+
+	if genre.String() != "undefined" {
+		t.Error(`failed to pass un-initialized genre: the returned string should be "undefined"`)
+	}
+
+	genre = GenreEnum(-1)
+
+	if genre.String() != "undefined" {
+		t.Error(`failed to pass undefined genre: the returned string should be "undefined"`)
 	}
 }
