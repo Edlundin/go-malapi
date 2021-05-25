@@ -21,15 +21,15 @@ func TestParseError(t *testing.T) {
 		t.Error("failed to pass malformed JSON object: no error returned")
 	}
 
-	if _, err := ParseError([]byte("{\"message\": \"error message\", error: error type}")); err == nil {
+	if _, err := ParseError([]byte(`{"message": "error message", error: error type}`)); err == nil {
 		t.Error("failed to pass partially malformed JSON object: no error returned")
 	}
 
-	if _, err := ParseError([]byte("{\"message\": \"error message\", error: \"\"}")); err == nil {
+	if _, err := ParseError([]byte(`{"message": "error message", error: ""}`)); err == nil {
 		t.Error("failed to pass well formed JSON object with empty value properties: no error returned")
 	}
 
-	if malError, err := ParseError([]byte("{\"message\":\"error message\", \"pollution\":\"pollution string\", \"error\":\"error type\",\"pollution\":\"pollution string\"}")); err != nil {
+	if malError, err := ParseError([]byte(`{"message":"error message", "pollution":"pollution string", "error":"error type","pollution":"pollution string"}`)); err != nil {
 		t.Errorf("failed to pass polluted JSON object: %s", err.Error())
 	} else if malError.Message != "error message" {
 		t.Errorf("failed to pass polluted formed JSON object: %s: %q != %q", "message", malError.Message, "message error")
@@ -37,7 +37,7 @@ func TestParseError(t *testing.T) {
 		t.Errorf("failed to pass polluted formed JSON object: %s: %q != %q", "error", malError.Error, "error type")
 	}
 
-	if malError, err := ParseError([]byte("{\"pollution\":\"pollution string\", \"message\":\"error message\", \"error\":\"error type\"}")); err != nil {
+	if malError, err := ParseError([]byte(`{"pollution":"pollution string", "message":"error message", "error":"error type"}`)); err != nil {
 		t.Errorf("failed to pass polluted JSON object: %s", err.Error())
 	} else if malError.Message != "error message" {
 		t.Errorf("failed to pass polluted formed JSON object: %s: %q != %q", "message", malError.Message, "message error")
@@ -45,7 +45,7 @@ func TestParseError(t *testing.T) {
 		t.Errorf("failed to pass polluted formed JSON object: %s: %q != %q", "error", malError.Error, "error type")
 	}
 
-	if malError, err := ParseError([]byte("{\"message\":\"error message\", \"error\":\"error type\"}")); err != nil {
+	if malError, err := ParseError([]byte(`{"message":"error message", "error":"error type"}`)); err != nil {
 		t.Errorf("failed to pass well formed JSON object: %s", err.Error())
 	} else if malError.Message != "error message" {
 		t.Errorf("failed to pass well formed JSON object: %s: %q != %q", "message", malError.Message, "message error")
@@ -71,15 +71,15 @@ func TestParsePaging(t *testing.T) {
 		t.Error("failed to pass malformed JSON object: no error returned")
 	}
 
-	if _, err := ParseError([]byte("{\"previous\": \"https://google.com\", next: https://myanimelist.net/}")); err == nil {
+	if _, err := ParseError([]byte(`{"previous": "https://google.com", next: https://myanimelist.net/}`)); err == nil {
 		t.Error("failed to pass partially malformed JSON object: no error returned")
 	}
 
-	if _, err := ParseError([]byte("{\"previous\": \"https://google.com\", next: \"\"}")); err == nil {
+	if _, err := ParseError([]byte(`{"previous": "https://google.com", next: ""}`)); err == nil {
 		t.Error("failed to pass well formed JSON object with empty value properties: no error returned")
 	}
 
-	if paging, err := ParsePaging([]byte("{\"previous\":\"https://google.com\", \"pollution\":\"pollution string\", \"next\":\"https://myanimelist.net/\",\"pollution\":\"pollution string\"}")); err != nil {
+	if paging, err := ParsePaging([]byte(`{"previous":"https://google.com", "pollution":"pollution string", "next":"https://myanimelist.net/","pollution":"pollution string"}`)); err != nil {
 		t.Errorf("failed to pass polluted JSON object: %s", err.Error())
 	} else if paging.PreviousURL.String() != "https://google.com" {
 		t.Errorf("failed to pass polluted JSON object: %q: %q != %q", "previous", paging.PreviousURL.String(), "https://google.com")
@@ -87,7 +87,7 @@ func TestParsePaging(t *testing.T) {
 		t.Errorf("failed to pass polluted JSON object: %q: %q != %q", "next", paging.NextURL.String(), "https://myanimelist.net/")
 	}
 
-	if paging, err := ParsePaging([]byte("{\"pollution\":\"pollution string\", \"previous\":\"https://google.com\", \"next\":\"https://myanimelist.net/\"}")); err != nil {
+	if paging, err := ParsePaging([]byte(`{"pollution":"pollution string", "previous":"https://google.com", "next":"https://myanimelist.net/"}`)); err != nil {
 		t.Errorf("failed to pass polluted JSON object: %s", err.Error())
 	} else if paging.PreviousURL.String() != "https://google.com" {
 		t.Errorf("failed to pass polluted JSON object: %q: %q != %q", "previous", paging.PreviousURL.String(), "https://google.com")
@@ -95,7 +95,7 @@ func TestParsePaging(t *testing.T) {
 		t.Errorf("failed to pass polluted JSON object: %q: %q != %q", "next", paging.NextURL.String(), "https://myanimelist.net/")
 	}
 
-	if paging, err := ParsePaging([]byte("{\"previous\":\"https://google.com\", \"next\":\"https://myanimelist.net/\"}")); err != nil {
+	if paging, err := ParsePaging([]byte(`{"previous":"https://google.com", "next":"https://myanimelist.net/"}`)); err != nil {
 		t.Errorf("failed to pass well JSON object: %s", err.Error())
 	} else if paging.PreviousURL.String() != "https://google.com" {
 		t.Errorf("failed to pass well JSON object: %q: %q != %q", "previous", paging.PreviousURL.String(), "https://google.com")
@@ -105,23 +105,23 @@ func TestParsePaging(t *testing.T) {
 }
 
 func TestParseCalendarDate(t *testing.T) {
-	if _, err := ParseCalendarDate([]byte("\"\"")); err == nil {
+	if _, err := ParseCalendarDate([]byte(`""`)); err == nil {
 		t.Error("failed to pass empty string: no error returned")
 	}
 
-	if _, err := ParseCalendarDate([]byte("\" \"")); err == nil {
+	if _, err := ParseCalendarDate([]byte(`" "`)); err == nil {
 		t.Error("failed to pass space string: no error returned")
 	}
 
-	if _, err := ParseCalendarDate([]byte("\"1958-12-48\"")); err == nil {
+	if _, err := ParseCalendarDate([]byte(`"1958-12-48"`)); err == nil {
 		t.Error("failed to pass malformed date (48th day of the month): no error returned")
 	}
 
-	if _, err := ParseCalendarDate([]byte("\"1958-15-03\"")); err == nil {
+	if _, err := ParseCalendarDate([]byte(`"1958-15-03"`)); err == nil {
 		t.Error("failed to pass malformed date (15th month of the year): no error returned")
 	}
 
-	if calDate, err := ParseCalendarDate([]byte("\"1958-12-03\"")); err != nil {
+	if calDate, err := ParseCalendarDate([]byte(`"1958-12-03"`)); err != nil {
 		t.Errorf("failed to pass well formed date: %s", err.Error())
 	} else if calDate.Year() != 1958 {
 		t.Errorf("failed to pass well formed date: year: %d != %d", calDate.Year(), 1958)
