@@ -36,16 +36,16 @@ var mediaTypeStrDict = map[MediaType]string{
 }
 
 func (m *MediaType) UnmarshalJSON(b []byte) error {
-	var listStatusStr string
+	var mediaTypeStr string
 
-	if err := json.Unmarshal(b, &listStatusStr); err != nil {
+	if err := json.Unmarshal(b, &mediaTypeStr); err != nil {
 		return err
 	}
 
 	found := false
 
 	for key, v := range mediaTypeStrDict {
-		if v == listStatusStr {
+		if v == mediaTypeStr {
 			*m = key
 			found = true
 			break
@@ -53,7 +53,7 @@ func (m *MediaType) UnmarshalJSON(b []byte) error {
 	}
 
 	if !found {
-		return fmt.Errorf("%q is not a media type", listStatusStr)
+		return fmt.Errorf("%q is not a media type", mediaTypeStr)
 	}
 
 	return nil
