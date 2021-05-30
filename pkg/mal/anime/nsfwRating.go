@@ -23,7 +23,7 @@ var nsfwRatingStrDict = map[NsfwRating]string{
 	NsfwRatingBlack: "black",
 }
 
-func (m *NsfwRating) UnmarshalJSON(b []byte) error {
+func (n *NsfwRating) UnmarshalJSON(b []byte) error {
 	var nsfwRatingStr string
 
 	if err := json.Unmarshal(b, &nsfwRatingStr); err != nil {
@@ -34,14 +34,14 @@ func (m *NsfwRating) UnmarshalJSON(b []byte) error {
 
 	for key, v := range nsfwRatingStrDict {
 		if v == nsfwRatingStr {
-			*m = key
+			*n = key
 			found = true
 			break
 		}
 	}
 
 	if !found {
-		return fmt.Errorf("%q is not a media type", nsfwRatingStr)
+		return fmt.Errorf("%q is not a nsfw rating", nsfwRatingStr)
 	}
 
 	return nil
@@ -49,10 +49,10 @@ func (m *NsfwRating) UnmarshalJSON(b []byte) error {
 
 //String returns the string representation of an enum value.
 //If the value is not valid (e.g. undefined enum value), this functions returns "undefined".
-func (m NsfwRating) String() string {
+func (n NsfwRating) String() string {
 	nsfwRatingStr := "undefined"
 
-	if str, ok := nsfwRatingStrDict[m]; ok {
+	if str, ok := nsfwRatingStrDict[n]; ok {
 		nsfwRatingStr = str
 	}
 
